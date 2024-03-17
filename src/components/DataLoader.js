@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Map from "./Map";
-import { shapes } from "../data/routes";
 
 function DataLoader() {
   // initial state with placeholders for the API data
@@ -53,8 +52,8 @@ function DataLoader() {
   // effect to run once on mount and listen at specified intervals
   useEffect(() => {
     fetchData(); // Initial fetch
-    // const interval = setInterval(fetchData, 300000); // 5 minutes interval
-    // return () => clearInterval(interval); // Cleanup on unmount
+    const interval = setInterval(fetchData, 300000); // 5 minutes interval
+    return () => clearInterval(interval); // Cleanup on unmount
   }, []);
 
   return (

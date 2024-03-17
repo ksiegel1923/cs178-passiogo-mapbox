@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
-// import "./Map.css";
 import * as turf from "@turf/turf";
 import InputAutofill from "./InputAutofill";
 import { shuttleStops } from "../data/shuttleStops";
@@ -24,7 +23,8 @@ import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
 import AirportShuttleIcon from "@mui/icons-material/AirportShuttle";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import PlaceIcon from "@mui/icons-material/Place";
-import { shapes } from "../data/routes";
+import { trips, shapes } from "../data/trips";
+import bus from "../data/bus.png";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_KEY;
 
@@ -50,7 +50,6 @@ function Map({ passioData, dataLoading }) {
   const [walkingDest, setWalkingDest] = useState("");
   const [shuttleDepart, setShuttleDepart] = useState("");
   const [shuttleArrive, setShuttleArrive] = useState("");
-  // const [allPoints, setAllPoints] = useState("");
   const [timeOnShuttle, setTimeOnShuttle] = useState("");
 
   // Initialize map when component mounts
@@ -61,6 +60,7 @@ function Map({ passioData, dataLoading }) {
       center: [-71.11, 42.37], // Center the map in Cambridge
       zoom: 13,
     });
+    console.log(passioData.vehiclePositions.entity);
 
     // Add navigation control (the +/- zoom buttons)
     map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
@@ -127,7 +127,9 @@ function Map({ passioData, dataLoading }) {
       },
       paint: {
         "circle-radius": 12,
-        "circle-color": "#486DE0",
+        "circle-color": `${
+          location[0] === currentLocation[0] ? "#2434bf" : "#24bf3c"
+        }`,
       },
     });
 
@@ -205,7 +207,7 @@ function Map({ passioData, dataLoading }) {
           "line-cap": "round",
         },
         paint: {
-          "line-color": start === currentLocation ? "#FF0000" : "#008000",
+          "line-color": start === currentLocation ? "#5562d4" : "#008000",
           "line-width": 5,
           "line-opacity": 0.75,
         },
@@ -213,7 +215,7 @@ function Map({ passioData, dataLoading }) {
     }
   }
 
-  // Retrieve current location from search boxe
+  // Retrieve current location from search box
   const handleRetrieveLocation = useCallback(
     (res) => {
       console.log(res);
@@ -259,18 +261,14 @@ function Map({ passioData, dataLoading }) {
       },
       paint: {
         "circle-radius": 10,
-        "circle-color": start === currentLocation ? "#FF0000" : "#008000",
+        "circle-color": start === currentLocation ? "#5562d4" : "#008000",
       },
     });
   }
 
-  // const findRoutesWithStop = () => {
+  // findRoutesWithStop
   useEffect(() => {
-    console.log(nearestStopCur);
-    console.log(nearestStopDest);
     if (nearestStopCur !== "" && nearestStopDest !== "") {
-      console.log(nearestStopCur);
-
       let featureStartNumber = nearestStopCur.properties.featureIndex;
       let startStopId = stopIds[featureStartNumber];
       let featureEndNumber = nearestStopDest.properties.featureIndex;
@@ -280,23 +278,16 @@ function Map({ passioData, dataLoading }) {
       let finalRoute;
       let destinationArrival;
       let stopArrival;
-      // console.log(stopId);
       // Find routes with currentStop
-      // for (const [key, value] of Object.entries(tripUpdates.entity)) {
       for (const [key, value] of Object.entries(
         passioData.tripUpdates.entity
       )) {
-        // console.log(`${key}: ${value}`);
-        // console.log(key);
-        // console.log(value);
         for (const [key, valueNew] of Object.entries(
           value.trip_update.stop_time_update
         )) {
-          //console.log(value);
           if (valueNew.stop_id === startStopId) {
             routesWithStop.push(value.id);
             console.log(value.id);
-            //FINISH THIS
             routesWithStopTime.push(valueNew.arrival.time);
             break;
           }
@@ -312,73 +303,48 @@ function Map({ passioData, dataLoading }) {
             value.trip_update.stop_time_update
           )) {
             if (valueNew.stop_id === endStopId) {
-              // console.log(value);
-              // console.log(valueNew);
-              // setVehicleId(value.trip_update.trip.trip_id);
               finalRoute = value;
-              console.log(finalRoute);
               destinationArrival = valueNew.arrival.time;
               var stopIndex = routesWithStop.indexOf(value.id);
               stopArrival = routesWithStopTime[stopIndex];
-              console.log("made it2");
               break;
             }
           }
         }
       }
-      console.log(finalRoute);
-      console.log(stopArrival);
-      console.log(fromEpochToTime(stopArrival));
-      console.log(destinationArrival);
-      console.log(fromEpochToTime(destinationArrival));
       setShuttleDepart(fromEpochToTime(stopArrival));
       setShuttleArrive(fromEpochToTime(destinationArrival));
       setTimeOnShuttle(destinationArrival - stopArrival);
-      // getRoute(
-      //   nearestStopCur.geometry.coordinates,
-      //   nearestStopDest.geometry.coordinates,
-      //   "driving"
-      // );
       setDirectionsLoaded(true);
       getRouteId(finalRoute);
     }
   }, [nearestStopCur, nearestStopDest]);
-
-  // useEffect(() => {
-  //   console.log(allPoints);
-  //   if (allPoints !== "") {
-  //     map.current.addLayer({
-  //       id: "route",
-  //       type: "circle",
-  //       source: {
-  //         type: "geojson",
-  //         data: {
-  //           type: "FeatureCollection",
-  //           features: allPoints,
-  //         },
-  //       },
-  //     });
-  //   }
-  // }, [allPoints]);
 
   function fromEpochToTime(epochTime) {
     return moment(epochTime * 1000).format("h:mm A");
   }
 
   function getRouteId(route) {
-    shapes.forEach(function (item, index) {
-      console.log(item.trips);
-      console.log(Number(route.trip_update.trip.trip_id));
-      if (item.trips) {
-        if (item.trips.includes(Number(route.trip_update.trip.trip_id))) {
-          console.log("found");
-          plotRoute(index);
+    var shape_id;
+    var routeCoords = [];
+    trips.forEach(function (trip) {
+      if (trip[2]) {
+        if (trip[2] === route.trip_update.trip.trip_id) {
+          shape_id = trip[7];
+          shapes.forEach(function (shape) {
+            if (shape[0] == shape_id) {
+              routeCoords.push([shape[2], shape[1]]);
+            }
+          });
+          plotRoute(routeCoords);
+          plotBus(route.trip_update.trip.trip_id);
+          return;
         }
       }
     });
   }
 
-  function plotRoute(route_index) {
+  function plotRoute(routeCoords) {
     map.current.addSource("route-drawing", {
       type: "geojson",
       data: {
@@ -386,9 +352,7 @@ function Map({ passioData, dataLoading }) {
         properties: {},
         geometry: {
           type: "LineString",
-          coordinates: shapes[route_index].path.map((e) =>
-            Object.values(e).reverse()
-          ),
+          coordinates: routeCoords,
         },
       },
     });
@@ -407,23 +371,56 @@ function Map({ passioData, dataLoading }) {
     });
   }
 
+  function plotBus(trip_id) {
+    passioData.vehiclePositions.entity.forEach(function (item) {
+      console.log(item);
+      if (item.vehicle.trip.trip_id === trip_id) {
+        map.current.loadImage(bus, (error, image) => {
+          if (error) throw error;
+
+          // Add the image to the map style.
+          map.current.addImage("cat", image);
+
+          // Add a data source containing one point feature.
+          map.current.addSource("point", {
+            type: "geojson",
+            data: {
+              type: "FeatureCollection",
+              features: [
+                {
+                  type: "Feature",
+                  geometry: {
+                    type: "Point",
+                    coordinates: [
+                      item.vehicle.position.longitude,
+                      item.vehicle.position.latitude,
+                    ],
+                  },
+                },
+              ],
+            },
+          });
+
+          // Add a layer to use the image to represent the data.
+          map.current.addLayer({
+            id: "points",
+            type: "symbol",
+            source: "point", // reference the data source
+            layout: {
+              "icon-image": "cat", // reference the image
+              "icon-size": 0.15,
+            },
+          });
+        });
+      }
+    });
+  }
+
   function handleSubmit() {
     // Find closest stop to your location
     findClosestStop(currentLocation);
-    // Get directions to closest stop
-    // console.log(nearestStopCur);
-    // getDirections(currentLocation, nearestStopCur.geometry.coordinates);
-    // // Find closest stop to destination location
+    // Find closest stop to destination location
     findClosestStop(destination);
-    // // Get directions from stop to destination
-    // getDirections(destination, nearestStopDest.geometry.coordinates);
-    // Get shuttle schedule for departure stop
-    // findRoutesWithStop();
-    // Make sure shuttle doesn't leave before you will arrive
-    // Calculate wait time at stop
-    // Calculate time on shuttle to destination
-    // Also want to include if click on stop tells you the schedule
-    // Add shuttle to map? --> maybe with a toggle button
   }
 
   return (
@@ -510,7 +507,6 @@ function Map({ passioData, dataLoading }) {
           </ListItem>
         </List>
       )}
-      {/* <button onClick={handleSubmit}>Get Directions</button> */}
     </div>
   );
 }
