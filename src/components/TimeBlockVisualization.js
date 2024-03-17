@@ -23,7 +23,7 @@ const TimeBlockVisualization = ({ walkingCur, timeOnShuttle, walkingDest, uncert
           marginRight: '5px',
           textAlign: 'center'
         }}>
-          {Math.ceil(walkingCur / 60)} min
+          {Math.ceil(walkingCur / 60)} min to walk
         </div>
 
         {/* uncertainty before shuttle */}
@@ -46,7 +46,7 @@ const TimeBlockVisualization = ({ walkingCur, timeOnShuttle, walkingDest, uncert
           marginRight: '5px',
           textAlign: 'center'
         }}>
-          {moment(timeOnShuttle * 1000).format("m")} min
+          {moment(timeOnShuttle * 1000).format("m")} min on bus
         </div>
 
         {/* uncertainty after shuttle */}
@@ -68,7 +68,7 @@ const TimeBlockVisualization = ({ walkingCur, timeOnShuttle, walkingDest, uncert
           backgroundColor: '#85e085',
           textAlign: 'center'
         }}>
-          {Math.ceil(walkingDest / 60)} min
+          {Math.ceil(walkingDest / 60)} min to walk
         </div>
       </div>
     </div>
