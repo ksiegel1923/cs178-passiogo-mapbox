@@ -25,6 +25,7 @@ import AirportShuttleIcon from "@mui/icons-material/AirportShuttle";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import PlaceIcon from "@mui/icons-material/Place";
 import { shapes } from "../data/routes";
+import TimeBlockVisualization from "./TimeBlockVisualization";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_KEY;
 
@@ -444,6 +445,14 @@ function Map({ passioData, dataLoading }) {
       </div>
       {!dataLoading && <div className="map-container" ref={mapContainer} />}
       {directionsLoaded && (
+        <>
+          <TimeBlockVisualization
+            walkingCur={walkingCur}
+            timeOnShuttle={timeOnShuttle}
+            walkingDest={walkingDest}
+            uncertaintyBefore={/* You need to calculate or define this */}
+            uncertaintyAfter={/* You need to calculate or define this */}
+        />
         <List
           sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
           component="nav"
