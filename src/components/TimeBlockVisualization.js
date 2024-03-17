@@ -1,12 +1,12 @@
 const TimeBlockVisualization = ({ walkingCur, timeOnShuttle, walkingDest, uncertaintyBefore, uncertaintyAfter }) => {
   // Placeholder values for uncertainties
   walkingCur = Math.ceil(walkingCur / 60); 
-  timeOnShuttle = moment(timeOnShuttle * 1000).format("m"); 
+  timeOnShuttle = parseInt(moment(timeOnShuttle * 1000).format("m"), 10); 
   walkingDest = Math.ceil(walkingDest / 60); 
-  uncertaintyBefore = 2*(1.96*(221.49/Math.sqrt(4850))); //from Jupyter Notebook calcs
-  uncertaintyAfter = 2*(1.96*(221.49/Math.sqrt(4850))); //from Jupyter Notebook calcs
+  uncertaintyBefore = Math.round(2*(1.96*(221.49/Math.sqrt(4850)))); //from Jupyter Notebook calcs
+  uncertaintyAfter = Math.round(2*(1.96*(221.49/Math.sqrt(4850)))); //from Jupyter Notebook calcs
 
-  const totalDuration = walkingCur + timeOnShuttle * 1000 + walkingDest + uncertaintyBefore + uncertaintyAfter;
+  const totalDuration = walkingCur + timeOnShuttle + walkingDest + uncertaintyBefore + uncertaintyAfter;
 
   const getBlockWidth = (time) => {
     return `${(time / totalDuration) * 100}%`;
