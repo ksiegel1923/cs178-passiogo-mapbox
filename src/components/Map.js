@@ -450,6 +450,8 @@ function Map({ passioData, dataLoading }) {
             walkingCur={walkingCur}
             timeOnShuttle={timeOnShuttle}
             walkingDest={walkingDest}
+            uncertaintyBefore = 2*(1.96*(221.49/Math.sqrt(4850))); //from Jupyter Notebook calcs
+            uncertaintyAfter = 2*(1.96*(221.49/Math.sqrt(4850))); //from Jupyter Notebook calcs
         />
         <List
           sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
