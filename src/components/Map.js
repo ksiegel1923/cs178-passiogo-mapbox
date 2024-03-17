@@ -450,8 +450,6 @@ function Map({ passioData, dataLoading }) {
             walkingCur={walkingCur}
             timeOnShuttle={timeOnShuttle}
             walkingDest={walkingDest}
-            uncertaintyBefore={/* You need to calculate or define this */}
-            uncertaintyAfter={/* You need to calculate or define this */}
         />
         <List
           sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
