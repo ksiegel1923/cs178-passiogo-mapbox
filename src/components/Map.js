@@ -446,11 +446,6 @@ function Map({ passioData, dataLoading }) {
       {!dataLoading && <div className="map-container" ref={mapContainer} />}
       {directionsLoaded && (
         <div>
-          <TimeBlockVisualization
-            walkingCur={walkingCur}
-            timeOnShuttle={timeOnShuttle}
-            walkingDest={walkingDest}
-          />
           <List
             sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
             component="nav"
@@ -516,6 +511,11 @@ function Map({ passioData, dataLoading }) {
               />
             </ListItem>
           </List>
+          <TimeBlockVisualization
+            walkingCur={walkingCur}
+            timeOnShuttle={timeOnShuttle}
+            walkingDest={walkingDest}
+          />
         </div>
       )}
       {/* <button onClick={handleSubmit}>Get Directions</button> */}
