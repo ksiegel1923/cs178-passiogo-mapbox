@@ -56,7 +56,7 @@ const TimeBlockVisualization = ({ walkingCur, timeOnShuttle, walkingDest }) => {
               textAlign: "center",
             }}
           >
-            <Typography variant="caption">Uncertainty @ 95% CF</Typography>
+            <Typography variant="caption">{uncertaintyBefore} min uncertainty</Typography>
           </Box>
 
           {/* Block for time on the shuttle */}
@@ -83,7 +83,7 @@ const TimeBlockVisualization = ({ walkingCur, timeOnShuttle, walkingDest }) => {
               textAlign: "center",
             }}
           >
-            <Typography variant="caption">Uncertainty @ 95% CF</Typography>
+            <Typography variant="caption">{uncertaintyAfter} min uncertainty</Typography>
           </Box>
 
           {/* Block for walking from the stop to destination */}
