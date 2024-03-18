@@ -1,12 +1,15 @@
-import moment from "moment";
+import React from 'react';
+import moment from 'moment';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 const TimeBlockVisualization = ({ walkingCur, timeOnShuttle, walkingDest }) => {
   // Placeholder values for uncertainties
   walkingCur = Math.ceil(walkingCur / 60);
   timeOnShuttle = parseInt(moment(timeOnShuttle * 1000).format("m"), 10);
   walkingDest = Math.ceil(walkingDest / 60);
-  var uncertaintyBefore = Math.round(2 * (1.96 * (221.49 / Math.sqrt(4850)))); //from Jupyter Notebook calcs
-  var uncertaintyAfter = Math.round(2 * (1.96 * (221.49 / Math.sqrt(4850)))); //from Jupyter Notebook calcs
+  var uncertaintyBefore = Math.round(2 * (1.96 * (221.49 / Math.sqrt(4850))));
+  var uncertaintyAfter = Math.round(2 * (1.96 * (221.49 / Math.sqrt(4850))));
 
   const totalDuration =
     walkingCur +
@@ -20,75 +23,86 @@ const TimeBlockVisualization = ({ walkingCur, timeOnShuttle, walkingDest }) => {
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
-      <div style={{ flexGrow: 1, display: "flex" }}>
-        {/* block for walking to the stop */}
-        <div
-          style={{
-            height: "20px",
+    <>
+    <Box mt={2}>
+        <Typography variant="body1" gutterBottom>
+          Details on Timing Uncertainty:
+        </Typography>
+        <Typography variant="body2">
+          The error bars before and after the bus segment are calculated based on historical data for delays at the given route and estimated using a 95% confidence interval. The total uncertainty added to the travel time is twice the result to account for both before and after the shuttle segments that may potentially overlap with walking times.
+        </Typography>
+      </Box>
+    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+      <Box sx={{ flexGrow: 1, display: 'flex' }}>
+        {/* Block for walking to the stop */}
+        <Box
+          sx={{
+            height: '60px',
             width: getBlockWidth(walkingCur),
-            backgroundColor: "#3887be",
-            marginRight: "5px",
-            textAlign: "center",
+            backgroundColor: '#3887be',
+            mr: '5px',
+            textAlign: 'center',
+            fontSize: '8px',
           }}
         >
-          {walkingCur} min to walk
-        </div>
+          <Typography variant="caption">{walkingCur} min walk</Typography>
+        </Box>
 
-        {/* uncertainty before shuttle */}
-        <div
-          style={{
-            height: "20px",
+        {/* Uncertainty before shuttle */}
+        <Box
+          sx={{
+            height: '60px',
             width: getBlockWidth(uncertaintyBefore),
-            backgroundColor: "#ff9933",
+            backgroundColor: '#ff9933',
             opacity: 0.5,
-            marginRight: "5px",
-            textAlign: "center",
+            mr: '5px',
+            textAlign: 'center',
           }}
         >
-          {/* Uncertainty @ 95% CF */}
-        </div>
+          <Typography variant="caption">Uncertainty @ 95% CF</Typography>
+        </Box>
 
         {/* Block for time on the shuttle */}
-        <div
-          style={{
-            height: "20px",
-            width: getBlockWidth(timeOnShuttle * 1000),
-            backgroundColor: "#ff9933",
-            marginRight: "5px",
-            textAlign: "center",
+        <Box
+          sx={{
+            height: '60px',
+            width: getBlockWidth(timeOnShuttle),
+            backgroundColor: '#ff9933',
+            mr: '5px',
+            textAlign: 'center',
           }}
         >
-          {timeOnShuttle} min on bus
-        </div>
+          <Typography variant="body2">{timeOnShuttle} min on bus</Typography>
+        </Box>
 
-        {/* uncertainty after shuttle */}
-        <div
-          style={{
-            height: "20px",
+        {/* Uncertainty after shuttle */}
+        <Box
+          sx={{
+            height: '60px',
             width: getBlockWidth(uncertaintyAfter),
-            backgroundColor: "#ff9933",
+            backgroundColor: '#ff9933',
             opacity: 0.5,
-            marginRight: "5px",
-            textAlign: "center",
+            mr: '5px',
+            textAlign: 'center',
           }}
         >
-          {/* Uncertainty @ 95% CF */}
-        </div>
+          <Typography variant="caption">Uncertainty @ 95% CF</Typography>
+        </Box>
 
-        {/* block for walking from the stop to destination */}
-        <div
-          style={{
-            height: "20px",
+        {/* Block for walking from the stop to destination */}
+        <Box
+          sx={{
+            height: '60px',
             width: getBlockWidth(walkingDest),
-            backgroundColor: "#85e085",
-            textAlign: "center",
+            backgroundColor: '#85e085',
+            textAlign: 'center',
           }}
         >
-          {walkingDest} min to walk
-        </div>
-      </div>
-    </div>
+          <Typography variant="caption">{walkingDest} min walk</Typography>
+        </Box>
+      </Box>
+    </Box>
+    </>
   );
 };
 
