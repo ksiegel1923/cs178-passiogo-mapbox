@@ -25,6 +25,7 @@ import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import PlaceIcon from "@mui/icons-material/Place";
 import { trips, shapes } from "../data/trips";
 import bus from "../data/bus.png";
+import TimeBlockVisualization from "./TimeBlockVisualization";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_KEY;
 
@@ -441,71 +442,78 @@ function Map({ passioData, dataLoading }) {
       </div>
       {!dataLoading && <div className="map-container" ref={mapContainer} />}
       {directionsLoaded && (
-        <List
-          sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-          component="nav"
-          aria-labelledby="nested-list-subheader"
-          subheader={
-            <ListSubheader component="div" id="nested-list-subheader">
-              Directions
-            </ListSubheader>
-          }
-        >
-          <ListItem>
-            <ListItemIcon>
-              <DirectionsWalkIcon sx={{ color: "#3887be" }} />
-            </ListItemIcon>
-            <ListItemText
-              primary={`Leave: Walk ${Math.ceil(
-                walkingCur / 60
-              )} minutes to your shuttle stop following the blue path`}
-            />
-          </ListItem>
-          <ListItemButton
-            onClick={() => setDirectionsInfoOpen(!directionsInfoOpen)}
+        <div>
+          <List
+            sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+            component="nav"
+            aria-labelledby="nested-list-subheader"
+            subheader={
+              <ListSubheader component="div" id="nested-list-subheader">
+                Directions
+              </ListSubheader>
+            }
           >
-            <ListItemIcon>
-              <AirportShuttleIcon />
-            </ListItemIcon>
-            <ListItemText
-              primary={`${nearestStopCur.properties.Name}: ${shuttleDepart}: shuttle arrives`}
-            />
-            {directionsInfoOpen ? <ExpandLessIcon /> : <ExpandMore />}
-          </ListItemButton>
-          <Collapse in={directionsInfoOpen} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItem sx={{ pl: 4 }}>
-                <ListItemIcon>
-                  <HourglassBottomIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={`${moment(timeOnShuttle * 1000).format(
-                    "m"
-                  )} minutes on shuttle`}
-                />
-              </ListItem>
-              {console.log(shuttleDepart)}
-            </List>
-          </Collapse>
-          <ListItem>
-            <ListItemIcon>
-              <PlaceIcon />
-            </ListItemIcon>
-            <ListItemText
-              primary={`${nearestStopDest.properties.Name}: ${shuttleArrive}: Arrive at destination stop`}
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemIcon>
-              <DirectionsWalkIcon sx={{ color: "#008000" }} />
-            </ListItemIcon>
-            <ListItemText
-              primary={`Walk ${Math.ceil(
-                walkingDest / 60
-              )} minutes to your destination following the green path`}
-            />
-          </ListItem>
-        </List>
+            <ListItem>
+              <ListItemIcon>
+                <DirectionsWalkIcon sx={{ color: "#3887be" }} />
+              </ListItemIcon>
+              <ListItemText
+                primary={`Leave: Walk ${Math.ceil(
+                  walkingCur / 60
+                )} minutes to your shuttle stop following the blue path`}
+              />
+            </ListItem>
+            <ListItemButton
+              onClick={() => setDirectionsInfoOpen(!directionsInfoOpen)}
+            >
+              <ListItemIcon>
+                <AirportShuttleIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={`${nearestStopCur.properties.Name}: ${shuttleDepart}: shuttle arrives`}
+              />
+              {directionsInfoOpen ? <ExpandLessIcon /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={directionsInfoOpen} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem sx={{ pl: 4 }}>
+                  <ListItemIcon>
+                    <HourglassBottomIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={`${moment(timeOnShuttle * 1000).format(
+                      "m"
+                    )} minutes on shuttle`}
+                  />
+                </ListItem>
+                {console.log(shuttleDepart)}
+              </List>
+            </Collapse>
+            <ListItem>
+              <ListItemIcon>
+                <PlaceIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={`${nearestStopDest.properties.Name}: ${shuttleArrive}: Arrive at destination stop`}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemIcon>
+                <DirectionsWalkIcon sx={{ color: "#008000" }} />
+              </ListItemIcon>
+              <ListItemText
+                primary={`Walk ${Math.ceil(
+                  walkingDest / 60
+                )} minutes to your destination following the green path`}
+              />
+            </ListItem>
+          </List>
+          <TimeBlockVisualization
+            walkingCur={walkingCur}
+            timeOnShuttle={timeOnShuttle}
+            walkingDest={walkingDest}
+          />
+        </div>
       )}
     </div>
   );
