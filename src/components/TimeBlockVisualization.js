@@ -8,6 +8,7 @@ const TimeBlockVisualization = ({ walkingCur, timeOnShuttle, walkingDest }) => {
   walkingCur = Math.ceil(walkingCur / 60);
   timeOnShuttle = parseInt(moment(timeOnShuttle * 1000).format("m"), 10);
   walkingDest = Math.ceil(walkingDest / 60);
+  // Uncertainty calculations done based on the 95% confidence interval
   var uncertaintyBefore = Math.round(2 * (1.96 * (221.49 / Math.sqrt(4850))));
   var uncertaintyAfter = Math.round(2 * (1.96 * (221.49 / Math.sqrt(4850))));
 
@@ -18,6 +19,7 @@ const TimeBlockVisualization = ({ walkingCur, timeOnShuttle, walkingDest }) => {
     uncertaintyBefore +
     uncertaintyAfter;
 
+  // Function to calculate how wide each block should look
   const getBlockWidth = (time) => {
     return `${(time / totalDuration) * 100}%`;
   };
@@ -56,7 +58,9 @@ const TimeBlockVisualization = ({ walkingCur, timeOnShuttle, walkingDest }) => {
               textAlign: "center",
             }}
           >
-            <Typography variant="caption">{uncertaintyBefore} min uncertainty</Typography>
+            <Typography variant="caption">
+              {uncertaintyBefore} min uncertainty
+            </Typography>
           </Box>
 
           {/* Block for time on the shuttle */}
@@ -83,7 +87,9 @@ const TimeBlockVisualization = ({ walkingCur, timeOnShuttle, walkingDest }) => {
               textAlign: "center",
             }}
           >
-            <Typography variant="caption">{uncertaintyAfter} min uncertainty</Typography>
+            <Typography variant="caption">
+              {uncertaintyAfter} min uncertainty
+            </Typography>
           </Box>
 
           {/* Block for walking from the stop to destination */}

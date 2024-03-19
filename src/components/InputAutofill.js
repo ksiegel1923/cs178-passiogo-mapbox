@@ -13,6 +13,8 @@ export default function InputAutofill({ ...props }) {
 
   return (
     <form>
+      {/* Using the Mapbox SearchBox API to suggest locations */}
+      {/* onRetrieve automatically grabs the suggested input that the user selects */}
       <SearchBox accessToken={token} onRetrieve={props.onRetrieve} value={""} />
     </form>
   );

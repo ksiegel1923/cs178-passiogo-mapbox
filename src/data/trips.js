@@ -1,3 +1,4 @@
+// The different shuttle routes
 export const routes = [
   ["777", "831", "1636", "1636'er", "3", "0099FF", "FFFFFF"],
   ["778", "831", "AL", "Allston Loop", "3", "A50606", "FFFFFF"],
@@ -23,6 +24,7 @@ export const routes = [
   ["2654", "831", "Thanks", "Thanksgiving Day", "3", "E14E00", "FFFFFF"],
 ];
 
+// The shape of each route (used to draw routes on the map)
 export const shapes = [
   ["48686", "42.381867", "-71.125325", "1"],
   ["48686", "42.380436", "-71.12435", "2"],

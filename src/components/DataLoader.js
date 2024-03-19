@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Map from "./Map";
 
+// This component is in charge of getting the live data from PassioGo
 function DataLoader() {
   // initial state with placeholders for the API data
   const [passioData, setPassioData] = useState({

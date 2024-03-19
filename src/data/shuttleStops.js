@@ -1,3 +1,5 @@
+// All of the shuttle stops with their coordinates in the form of a geojson (needed for MapBox API)
+
 export const shuttleStops = {
   type: "FeatureCollection",
   features: [

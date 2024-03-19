@@ -1,3 +1,4 @@
+// An array of all the different stopIds
 export const stopIds = [
   "5036",
   "58381",

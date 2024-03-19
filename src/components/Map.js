@@ -16,6 +16,8 @@ import {
   ListItemText,
   Collapse,
   ListItem,
+  Container,
+  Box,
 } from "@mui/material";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -35,11 +37,6 @@ function Map({ passioData, dataLoading }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
 
-  // States for Map
-  const [lng, setLng] = useState(5);
-  const [lat, setLat] = useState(34);
-  const [zoom, setZoom] = useState(1.5);
-
   // States for location / destination / stops
   const [currentLocation, setCurrentLocation] = useState([-71.1174, 42.3705]);
   const [destination, setDestination] = useState([-71.12643, 42.36351]);
@@ -58,20 +55,12 @@ function Map({ passioData, dataLoading }) {
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/streets-v12",
-      center: [-71.11, 42.37], // Center the map in Cambridge
+      center: [-71.11, 42.37], // Automatically center the map in Cambridge on load
       zoom: 13,
     });
-    console.log(passioData.vehiclePositions.entity);
 
     // Add navigation control (the +/- zoom buttons)
     map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
-
-    // Change lat / long when move map
-    map.current.on("move", () => {
-      setLng(map.current.getCenter().lng.toFixed(4));
-      setLat(map.current.getCenter().lat.toFixed(4));
-      setZoom(map.current.getZoom().toFixed(2));
-    });
 
     map.current.on("load", () => {
       // Show all the shuttle stops on the map
@@ -157,11 +146,7 @@ function Map({ passioData, dataLoading }) {
     const data = json.routes[0];
     // duration will be walking time in seconds
     const walkingDuration = data.duration;
-    const walkingMinutes = Math.ceil(walkingDuration / 60);
-    // const walkingSeconds = (walkingDuration - walkingMinutes * 60).toFixed(2);
-    // String describing how long it will take to walk
-    const walkingDurationString = walkingMinutes.toString() + " minutes";
-    console.log("walking duration" + walkingDurationString);
+    // save the walking duration to state variables for later use
     if (start === currentLocation) {
       setWalkingCur(walkingDuration);
     } else if (start === destination) {
@@ -267,7 +252,7 @@ function Map({ passioData, dataLoading }) {
     });
   }
 
-  // findRoutesWithStop
+  // Find the fastest routes that include the starting and destination stop
   useEffect(() => {
     if (nearestStopCur !== "" && nearestStopDest !== "") {
       let featureStartNumber = nearestStopCur.properties.featureIndex;
@@ -321,10 +306,12 @@ function Map({ passioData, dataLoading }) {
     }
   }, [nearestStopCur, nearestStopDest]);
 
+  // Convert from epoch time to human readable time
   function fromEpochToTime(epochTime) {
     return moment(epochTime * 1000).format("h:mm A");
   }
 
+  // Determine which shuttle route the user should take
   function getRouteId(route) {
     var shape_id;
     var routeCoords = [];
@@ -345,6 +332,7 @@ function Map({ passioData, dataLoading }) {
     });
   }
 
+  // Show the shuttle route that is suggested on the map
   function plotRoute(routeCoords) {
     map.current.addSource("route-drawing", {
       type: "geojson",
@@ -372,6 +360,7 @@ function Map({ passioData, dataLoading }) {
     });
   }
 
+  // Show the shuttle bus on the map once a route is chosen
   function plotBus(trip_id) {
     passioData.vehiclePositions.entity.forEach(function (item) {
       console.log(item);
@@ -380,7 +369,7 @@ function Map({ passioData, dataLoading }) {
           if (error) throw error;
 
           // Add the image to the map style.
-          map.current.addImage("cat", image);
+          map.current.addImage("shuttle", image);
 
           // Add a data source containing one point feature.
           map.current.addSource("point", {
@@ -408,7 +397,7 @@ function Map({ passioData, dataLoading }) {
             type: "symbol",
             source: "point", // reference the data source
             layout: {
-              "icon-image": "cat", // reference the image
+              "icon-image": "shuttle", // reference the image
               "icon-size": 0.15,
             },
           });
@@ -417,6 +406,7 @@ function Map({ passioData, dataLoading }) {
     });
   }
 
+  // Function that runs when we click the "get directions" button
   function handleSubmit() {
     // Find closest stop to your location
     findClosestStop(currentLocation);
@@ -426,23 +416,43 @@ function Map({ passioData, dataLoading }) {
 
   return (
     <div>
-      <div className="sidebarStyle">
-        <div>
-          Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
-        </div>
-      </div>
+      <Typography variant="h3">
+        NewPassioGo: Travel Around Harvard's Campus
+      </Typography>
       <div>
-        <Typography>Current Location</Typography>
-        <InputAutofill onRetrieve={handleRetrieveLocation} />
-        <Typography>Destination</Typography>
-        <InputAutofill onRetrieve={handleRetrieveDestination} />
-        <Button variant="contained" onClick={handleSubmit}>
-          Get Direction
-        </Button>
+        <Container maxWidth="md">
+          <Box
+            component="section"
+            sx={{
+              p: 2,
+              border: "1px dashed grey",
+            }}
+          >
+            <Typography fontWeight={"bold"} sx={{ textAlign: "left" }}>
+              Where are you leaving from?
+            </Typography>
+            <InputAutofill onRetrieve={handleRetrieveLocation} />
+            <Typography
+              fontWeight={"bold"}
+              sx={{ textAlign: "left", paddingTop: 2 }}
+            >
+              Where would you like to go?
+            </Typography>
+            <InputAutofill onRetrieve={handleRetrieveDestination} />
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+              sx={{ marginTop: 2 }}
+            >
+              Get Directions
+            </Button>
+          </Box>
+        </Container>
       </div>
       {!dataLoading && <div className="map-container" ref={mapContainer} />}
       {directionsLoaded && (
         <div>
+          {/* Show the directions in the style of Google Maps */}
           <List
             sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
             component="nav"
@@ -508,6 +518,7 @@ function Map({ passioData, dataLoading }) {
               />
             </ListItem>
           </List>
+          {/* // Show uncertainty */}
           <TimeBlockVisualization
             walkingCur={walkingCur}
             timeOnShuttle={timeOnShuttle}
