@@ -3,7 +3,7 @@ import Map from "./Map";
 
 // This component is in charge of getting the live data from PassioGo
 function DataLoader() {
-  // initial state with placeholders for the API data
+  // Set state variables that will hold the live data from passioGo
   const [passioData, setPassioData] = useState({
     serviceAlerts: {},
     tripUpdates: {},
@@ -11,33 +11,33 @@ function DataLoader() {
   });
   const [loading, setLoading] = useState(true);
 
-  // function to fetch data from the API
+  // function to get data from the PassioGo api
   const fetchData = async () => {
     try {
       const baseUrl =
-        "https://passio3.com/harvard/passioTransit/gtfs/realtime/"; // make sure to replace placeholder with endpoint
-      const proxyUrl = "https://corsproxy.io/?"; // cors proxy to get info from passio go
+        "https://passio3.com/harvard/passioTransit/gtfs/realtime/";
+      const proxyUrl = "https://corsproxy.io/?";
       const encodedBaseUrl = encodeURIComponent(baseUrl);
 
-      // fetch vehicle positions
+      // get vehicle positions
       const vehiclePositionsResponse = await fetch(
         proxyUrl + encodedBaseUrl + "/vehiclePositions.json"
       );
       const vehiclePositions = await vehiclePositionsResponse.json();
 
-      // fetch service alerts
+      // get service alerts
       const serviceAlertsResponse = await fetch(
         proxyUrl + encodedBaseUrl + "/serviceAlerts.json"
       );
       const serviceAlerts = await serviceAlertsResponse.json();
 
-      // fetch trip updates
+      // get trip updates
       const tripUpdatesResponse = await fetch(
         proxyUrl + encodedBaseUrl + "/tripUpdates.json"
       );
       const tripUpdates = await tripUpdatesResponse.json();
 
-      // update state with fetched data
+      // update state with PassioGo data
       setPassioData({
         serviceAlerts,
         tripUpdates,
@@ -46,15 +46,15 @@ function DataLoader() {
       setLoading(false);
     } catch (error) {
       console.error(`An error occurred while fetching the data: ${error}`);
-      setLoading(false); // Ensure loading state is updated in case of error
+      setLoading(false); // Set loading to false if there is an error
     }
   };
 
-  // effect to run once on mount and listen at specified intervals
+  // Actually get data from PassioGo
   useEffect(() => {
-    fetchData(); // Initial fetch
-    const interval = setInterval(fetchData, 300000); // 5 minutes interval
-    return () => clearInterval(interval); // Cleanup on unmount
+    fetchData(); // Initial API call
+    const interval = setInterval(fetchData, 300000); // Re-call API every 5 minutes
+    return () => clearInterval(interval); // Clear the interval when component unmounts
   }, []);
 
   return (
